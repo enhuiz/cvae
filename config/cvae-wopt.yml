@@ -1,0 +1,4 @@
+default: config/baseline.yml
+runner: tzq-cvae
+
+# w/o pretrained baseline

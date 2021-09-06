@@ -1,0 +1,10 @@
+runner: tzq-cvae-baseline
+
+batch_size: 32
+
+train:
+  max_epochs: 20
+  lr: 1e-3
+  validate_every_epoch: 5
+  save_every_epoch: 10
+  grad_clip_thres: 1.0

@@ -1,0 +1,5 @@
+default: config/baseline.yml
+runner: tzq-cvae
+
+# w/ pretrained baseline
+baseline_ckpt: runs/baseline/ckpts/default/epoch=20-step=37500.ckpt
