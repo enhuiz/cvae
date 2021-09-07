@@ -1,4 +1,0 @@
-default: config/cvae.yml
-
-freeze_baseline: true
-baseline_ckpt: null

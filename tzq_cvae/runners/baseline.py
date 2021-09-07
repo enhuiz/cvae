@@ -42,7 +42,7 @@ class Runner(torchzq.Runner):
         logits = self.unflatten(self.model(self.flatten(x)))
 
         loss = F.binary_cross_entropy_with_logits(logits, y, reduction="none")
-        loss = loss[x == -1].sum()
+        loss = loss[x == -1].sum() / len(x)
 
         # save for vis
         self.images = x[:16]

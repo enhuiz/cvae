@@ -2,3 +2,4 @@ __pycache__
 data
 wandb
 runs
+tzq_cvae/version.py

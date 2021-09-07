@@ -14,7 +14,7 @@ class Runner(BaselineRunner):
         self,
         baseline_ckpt: Optional[Path] = None,
         use_z_posterior_in_training: bool = True,
-        freeze_baseline: bool = False,
+        freeze_baseline: bool = True,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -46,6 +46,7 @@ class Runner(BaselineRunner):
             ),
         )
 
+    @torch.no_grad()
     def generate(self, x):
         x = self.flatten(x)
         z_prior = self.prior(x, self.baseline(x))
@@ -59,27 +60,25 @@ class Runner(BaselineRunner):
         x = self.flatten(x)
         y = self.flatten(y)
 
-        y_ = self.baseline(x)
+        z_prior = self.prior(x, self.baseline(x))
 
-        z_prior = self.prior(x, y_)
         z_posterior = self.encoder(x, y)
 
-        if self.model.training and args.use_z_posterior_in_training:
+        if args.use_z_posterior_in_training and self.model.training:
             z = z_posterior
         else:
             z = z_prior
 
-        loss_kl = kl_divergence(
-            self.encoder.normal,
-            self.prior.normal,
-        ).sum()
+        kl = kl_divergence(self.encoder.normal, self.prior.normal)
+        loss_kl = kl.mean(dim=0).sum()
 
         logits = self.unflatten(self.decoder(z))
+
         x = self.unflatten(x)
         y = self.unflatten(y)
 
         loss_bce = F.binary_cross_entropy_with_logits(logits, y, reduction="none")
-        loss_bce = loss_bce[x == -1].sum()
+        loss_bce = loss_bce[x == -1].sum() / len(x)
 
         self.logits = logits[:16]
         self.images = x[:16]
