@@ -1,3 +1,3 @@
 default: config/cvae.yml
 
-use_z_posterior_in_training: false
+sample_from_prior_when_training: true

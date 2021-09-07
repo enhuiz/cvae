@@ -48,7 +48,7 @@ class Runner(torchzq.Runner):
         self.images = x[:16]
         self.logits = logits[:16]
 
-        return loss, dict(loss_bce=loss.item())
+        return loss, dict(loss_bce=loss.item(), ncll=loss.item())
 
     def validation_step(self, batch, batch_idx):
         stat_dict = super().validation_step(batch, batch_idx)

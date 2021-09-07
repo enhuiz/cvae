@@ -32,7 +32,7 @@ class Encoder(ModuleTraits, Baseline):
         return z
 
     @property
-    def normal(self):
+    def normal(self) -> Normal:
         return self._saved_for_later["normal"]
 
 
