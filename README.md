@@ -50,6 +50,14 @@ tzq config/cvae-prior-z.yml train
 
 ![](https://api.wandb.ai/files/enhuiz/tzq-cvae/1enp48ov/media/images/generated_37500_8c5d69cffcde0b0ae29f.png)
 
+### CVAE w/o pretrained baseline, w/ frozen baseline
+
+```
+tzq config/cvae-freeze-baseline-wopt.yml train
+```
+
+![](https://api.wandb.ai/files/enhuiz/tzq-cvae/1e07rsk3/media/images/generated_37500_5b9c672c208d415a168e.png)
+
 More running details can be found [here](https://wandb.ai/enhuiz/tzq-cvae?workspace=user-enhuiz).
 
 ## Credits
