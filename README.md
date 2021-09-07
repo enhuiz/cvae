@@ -45,7 +45,7 @@ tzq config/cvae-freeze-baseline.yml train
 ### CVAE w/ latent variable comes from prior network fed into decoder during training
 
 ```
-tzq config/cvae-prior-z.yml
+tzq config/cvae-prior-z.yml train
 ```
 
 ![](https://api.wandb.ai/files/enhuiz/tzq-cvae/1enp48ov/media/images/generated_37500_8c5d69cffcde0b0ae29f.png)
@@ -54,5 +54,5 @@ More running details can be found [here](https://wandb.ai/enhuiz/tzq-cvae?worksp
 
 ## Credits
 
-- [Pyro's implementation](https://pyro.ai/examples/cvae.html#Baseline:-Deterministic-Neural-Network)
+- [Pyro's implementation](https://pyro.ai/examples/cvae.html#Baseline:-Deterministic-Neural-Network).
 - [Learning Structured Output Representation using Deep Conditional Generative Models](https://proceedings.neurips.cc/paper/2015/file/8d55a249e6baa5c06772297520da2051-Paper.pdf).
