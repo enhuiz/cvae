@@ -1,0 +1,3 @@
+default: config/cvae.yml
+
+freeze_baseline: true

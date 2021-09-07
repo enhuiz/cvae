@@ -10,17 +10,29 @@ from .baseline import Runner as BaselineRunner
 
 
 class Runner(BaselineRunner):
-    def __init__(self, baseline_ckpt: Optional[Path] = None, **kwargs):
+    def __init__(
+        self,
+        baseline_ckpt: Optional[Path] = None,
+        use_z_posterior_in_training: bool = True,
+        freeze_baseline: bool = False,
+        **kwargs
+    ):
         super().__init__(**kwargs)
 
     def create_model(self):
         args = self.args
 
         self.baseline = Baseline()
+
         if args.baseline_ckpt is not None:
             self.baseline.load_state_dict(
                 torch.load(args.baseline_ckpt, "cpu")["model"]
             )
+
+        if args.freeze_baseline:
+            for p in self.baseline.parameters():
+                p.requires_grad_(False)
+
         self.prior = Encoder()
         self.encoder = Encoder()
         self.decoder = Decoder()
@@ -34,42 +46,50 @@ class Runner(BaselineRunner):
             ),
         )
 
+    def generate(self, x):
+        x = self.flatten(x)
+        z_prior = self.prior(x, self.baseline(x))
+        logits = self.decoder(z_prior)
+        return self.unflatten(logits).sigmoid()
+
     def training_step(self, batch, _):
+        args = self.args
         x, y = batch
 
-        x = x.flatten(1)
-        y = y.flatten(1)
+        x = self.flatten(x)
+        y = self.flatten(y)
 
         y_ = self.baseline(x)
+
         z_prior = self.prior(x, y_)
-        z = self.encoder(x, y)
+        z_posterior = self.encoder(x, y)
+
+        if self.model.training and args.use_z_posterior_in_training:
+            z = z_posterior
+        else:
+            z = z_prior
 
         loss_kl = kl_divergence(
             self.encoder.normal,
             self.prior.normal,
         ).sum()
 
-        logits = self.decoder(z)
-        logits = logits.view(len(x), 1, 28, 28)
+        logits = self.unflatten(self.decoder(z))
+        x = self.unflatten(x)
+        y = self.unflatten(y)
 
-        x = x.view(len(x), 1, 28, 28)
-        y = y.view(len(x), 1, 28, 28)
-
-        loss_recon = F.binary_cross_entropy_with_logits(logits, y, reduction="none")
-        loss_recon = loss_recon[x == -1].sum()
+        loss_bce = F.binary_cross_entropy_with_logits(logits, y, reduction="none")
+        loss_bce = loss_bce[x == -1].sum()
 
         self.logits = logits[:16]
         self.images = x[:16]
 
-        loss = loss_recon + loss_kl
+        loss = loss_bce + loss_kl
 
         return loss, dict(
-            loss_recon=loss.item(),
+            loss_bce=loss_bce.item(),
             loss_kl=loss_kl.item(),
         )
-
-    def testing_step(self):
-        raise NotImplementedError
 
 
 def main():

@@ -1,0 +1,3 @@
+default: config/cvae.yml
+
+use_z_prior_in_training: true

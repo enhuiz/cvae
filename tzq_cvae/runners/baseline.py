@@ -1,3 +1,5 @@
+import numpy as np
+import torch
 import torchzq
 import torch.nn.functional as F
 
@@ -15,17 +17,29 @@ class Runner(torchzq.Runner):
             batch_size=args.batch_size,
             drop_last=mode == mode.TRAIN,
             shuffle=mode == mode.TRAIN,
+            worker_init_fn=np.random.seed(0),
             num_workers=args.nj,
         )
 
     def create_model(self):
         return Baseline()
 
+    @staticmethod
+    def flatten(x):
+        return x.flatten(1)
+
+    @staticmethod
+    def unflatten(x):
+        return x.view(len(x), 1, 28, 28)
+
+    @torch.no_grad()
+    def generate(self, x):
+        return self.unflatten(self.model(self.flatten(x))).sigmoid()
+
     def training_step(self, batch, _):
         x, y = batch
 
-        logits = self.model(x.flatten(1))
-        logits = logits.view(len(x), 1, 28, 28)
+        logits = self.unflatten(self.model(self.flatten(x)))
 
         loss = F.binary_cross_entropy_with_logits(logits, y, reduction="none")
         loss = loss[x == -1].sum()
@@ -34,16 +48,16 @@ class Runner(torchzq.Runner):
         self.images = x[:16]
         self.logits = logits[:16]
 
-        return loss, dict(loss=loss.item())
+        return loss, dict(loss_bce=loss.item())
 
     def validation_step(self, batch, batch_idx):
         stat_dict = super().validation_step(batch, batch_idx)
         if batch_idx == 0:
-            images = self.logits.sigmoid()
-            unmasked = self.images != -1
-            images[unmasked] = self.images[unmasked]
+            x = batch[0]
+            images = self.generate(x)
+            images[x != -1] = x[x != -1]
             self.logger.log(
-                dict(recon=self.logger.Image(images)),
+                dict(generated=self.logger.Image(images)),
                 self.global_step,
             )
         return stat_dict
