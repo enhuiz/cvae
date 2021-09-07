@@ -1,6 +1,6 @@
-# An Implementation of Conditional Variational Encoder (CVAE) based on TorchZQ
+# An implementation of conditional variational encoder (CVAE) based on TorchZQ
 
-This repo implements the MNIST experiment in the paper: Learning Structured Output Representation using Deep Conditional Generative Models.
+This repo partially implements the MNIST experiment in the paper: Learning Structured Output Representation using Deep Conditional Generative Models.
 
 ## Setup
 
@@ -16,7 +16,7 @@ pip install .
 tzq config/baseline.yml train
 ```
 
-![](https://api.wandb.ai/files/enhuiz/tzq-cvae/1uf2lr09/media/images/recon_37500_69c4b7d9a6318dfdc3a6.png)
+![](https://api.wandb.ai/files/enhuiz/tzq-cvae/xngngp5q/media/images/generated_37500_f10c1354dfbbe13177a7.png)
 
 ### CVAE
 
@@ -24,15 +24,31 @@ tzq config/baseline.yml train
 tzq config/cvae.yml train
 ```
 
-![](https://api.wandb.ai/files/enhuiz/tzq-cvae/ujztc6o9/media/images/recon_37500_115b76141b2460c52b8b.png)
+![](https://api.wandb.ai/files/enhuiz/tzq-cvae/1d3yv80a/media/images/generated_37500_8faf8d4d84bf3d886e92.png)
 
-### CVAE w/o pretrained baselne
+### CVAE w/o pretrained baseline
 
 ```
-tzq config/baseline.yml train
+tzq config/cvae-wopt.yml train
 ```
 
-![](https://api.wandb.ai/files/enhuiz/tzq-cvae/zyyhp9fj/media/images/recon_28125_5f58ad37d6dba07d472c.png)
+![](https://api.wandb.ai/files/enhuiz/tzq-cvae/cln5yruy/media/images/generated_37500_91f5f10872277857c404.png)
+
+### CVAE w/ frozen pretrained baseline
+
+```
+tzq config/cvae-freeze-baseline.yml train
+```
+
+![](https://api.wandb.ai/files/enhuiz/tzq-cvae/r3rrhzor/media/images/generated_37500_85c1afd74377bcd36eb9.png)
+
+### CVAE w/ latent variable comes from prior network fed into decoder during training
+
+```
+tzq config/cvae-prior-z.yml
+```
+
+![](https://api.wandb.ai/files/enhuiz/tzq-cvae/1enp48ov/media/images/generated_37500_8c5d69cffcde0b0ae29f.png)
 
 More running details can be found [here](https://wandb.ai/enhuiz/tzq-cvae?workspace=user-enhuiz).
 
