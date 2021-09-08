@@ -1,0 +1,5 @@
+default: config/cvae.yml
+
+conditioned_decoder: true
+baseline_ckpt: null
+use_baseline: false

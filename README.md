@@ -16,7 +16,7 @@ pip install .
 tzq config/baseline.yml train
 ```
 
-![](https://api.wandb.ai/files/enhuiz/tzq-cvae/xngngp5q/media/images/generated_37500_f10c1354dfbbe13177a7.png)
+![](https://api.wandb.ai/files/enhuiz/tzq-cvae/1trw1cxc/media/images/generated_37500_0d09c87438665058c544.png)
 
 ### CVAE
 
@@ -24,41 +24,27 @@ tzq config/baseline.yml train
 tzq config/cvae.yml train
 ```
 
-![](https://api.wandb.ai/files/enhuiz/tzq-cvae/1d3yv80a/media/images/generated_37500_8faf8d4d84bf3d886e92.png)
+![](https://api.wandb.ai/files/enhuiz/tzq-cvae/nj7zwpbm/media/images/generated_37500_969349d3c67c75077138.png)
 
-### CVAE w/o pretrained baseline
+### Quantitative comparisons
 
-```
-tzq config/cvae-wopt.yml train
-```
+All models are trained for 20 epochs with batch size 32 and learning rate `1e-3`. CVAE by default is not conditioned on the masked input (i.e. p(y|z) instead of p(y|z, x)).
 
-![](https://api.wandb.ai/files/enhuiz/tzq-cvae/cln5yruy/media/images/generated_37500_91f5f10872277857c404.png)
+| Method                                                 | NCLL (Importance Sampling (S = 100) ⬇️ |
+| ------------------------------------------------------ | -------------------------------------- |
+| Baseline                                               | 112.382                                |
+| CVAE (w/ conditioned decoder, w/o baseline)            | 83.745                                 |
+| CVAE (w/ conditioned decoder)                          | 79.524                                 |
+| CVAE (w/o conditioned prior)                           | 76.024                                 |
+| CVAE                                                   | 72.255                                 |
+| CVAE (w/o baseline)                                    | 70.868                                 |
+| CVAE (w/ jointly trained baseline from the pretrained) | 69.352                                 |
+| CVAE (w/ jointly trained baseline from scratch)        | 67.813                                 |
 
-### CVAE w/ frozen pretrained baseline
+- Baseline seems not helpful when decoder is not conditioned on the masked image.
+- Conditioning on the decoder harms NCLL.
 
-```
-tzq config/cvae-freeze-baseline.yml train
-```
-
-![](https://api.wandb.ai/files/enhuiz/tzq-cvae/r3rrhzor/media/images/generated_37500_85c1afd74377bcd36eb9.png)
-
-### CVAE w/ latent variable comes from prior network fed into decoder during training
-
-```
-tzq config/cvae-prior-z.yml train
-```
-
-![](https://api.wandb.ai/files/enhuiz/tzq-cvae/1enp48ov/media/images/generated_37500_8c5d69cffcde0b0ae29f.png)
-
-### CVAE w/o pretrained baseline, w/ frozen baseline
-
-```
-tzq config/cvae-freeze-baseline-wopt.yml train
-```
-
-![](https://api.wandb.ai/files/enhuiz/tzq-cvae/1e07rsk3/media/images/generated_37500_5b9c672c208d415a168e.png)
-
-More running details can be found [here](https://wandb.ai/enhuiz/tzq-cvae?workspace=user-enhuiz).
+More details can be found [here](https://wandb.ai/enhuiz/tzq-cvae?workspace=user-enhuiz).
 
 ## Credits
 
