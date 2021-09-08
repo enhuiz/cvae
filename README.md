@@ -30,7 +30,7 @@ tzq config/cvae.yml train
 
 All models are trained for 20 epochs with batch size 32 and learning rate `1e-3`. CVAE by default is not conditioned on the masked input (i.e. p(y|z) instead of p(y|z, x)).
 
-| Method                                                 | NCLL (Importance Sampling (S = 100) ⬇️ |
+| Method                                                 | NCLL via Importance Sampling (S = 100) |
 | ------------------------------------------------------ | -------------------------------------- |
 | Baseline                                               | 112.382                                |
 | CVAE (w/ conditioned decoder, w/o baseline)            | 83.745                                 |
