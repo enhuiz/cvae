@@ -1,0 +1,3 @@
+default: config/cvae.yml
+
+conditioned_decoder: true

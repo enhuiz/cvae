@@ -1,0 +1,5 @@
+default: config/cvae.yml
+
+# w/o pretrained baseline
+baseline_ckpt: null
+use_baseline: false
