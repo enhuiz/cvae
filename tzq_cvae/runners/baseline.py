@@ -3,7 +3,7 @@ import torch
 import torchzq
 import torch.nn.functional as F
 
-from ..dataset import MaskedMNIST
+from ..dataset import BlurryMNIST
 from ..models import Baseline
 
 
@@ -13,7 +13,7 @@ class Runner(torchzq.Runner):
 
     def create_dataloader(self, mode):
         args = self.args
-        return MaskedMNIST("data/mnist").as_dataloader(
+        return BlurryMNIST("data/mnist").as_dataloader(
             batch_size=args.batch_size,
             drop_last=mode == mode.TRAIN,
             shuffle=mode == mode.TRAIN,
@@ -42,7 +42,7 @@ class Runner(torchzq.Runner):
         logits = self.unflatten(self.model(self.flatten(x)))
 
         loss = F.binary_cross_entropy_with_logits(logits, y, reduction="none")
-        loss = loss[x == -1].sum() / len(x)
+        loss = loss.sum() / len(x)
 
         # save for vis
         self.images = x[:16]
@@ -55,7 +55,6 @@ class Runner(torchzq.Runner):
         if batch_idx == 0:
             x = batch[0]
             images = self.generate(x)
-            images[x != -1] = x[x != -1]
             self.logger.log(
                 dict(generated=self.logger.Image(images)),
                 self.global_step,

@@ -79,7 +79,6 @@ class Runner(BaselineRunner):
 
         z = rearrange(z, "s b d -> (s b) d")
         y = repeat(y, "b ... -> (s b) ...", s=args.importance_sampling_s)
-        unmasked = repeat(x != -1, "b ... -> (s b) ...", s=args.importance_sampling_s)
 
         if args.conditioned_decoder:
             x = self.flatten(x)
@@ -89,7 +88,6 @@ class Runner(BaselineRunner):
         logits = self.unflatten(self.decoder(z))
 
         bce = F.binary_cross_entropy_with_logits(logits, y, reduction="none")
-        bce[unmasked] = 0  # consider only masked pixels
         bce = bce.flatten(1).sum(dim=-1)
 
         logp = rearrange(logr - bce, "(s b) -> s b", b=len(x))
@@ -129,9 +127,8 @@ class Runner(BaselineRunner):
         x = self.unflatten(x)
         y = self.unflatten(y)
 
-        masked = x == -1  # (b 1 h w)
         loss_bce = F.binary_cross_entropy_with_logits(logits, y, reduction="none")
-        loss_bce = loss_bce[masked].sum() / len(x)
+        loss_bce = loss_bce.sum() / len(x)
 
         loss = loss_bce + loss_kl
 
